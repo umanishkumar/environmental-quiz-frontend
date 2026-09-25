@@ -1,0 +1,18 @@
+export const PREDEFINED_TOPICS = [
+  "Climate Change",
+  "Global Warming",
+  "Renewable Energy",
+  "Biodiversity",
+  "Ecosystems",
+  "Pollution",
+  "Water Conservation",
+  "Waste Management",
+  "Deforestation",
+  "Sustainable Development",
+  "Air Pollution",
+  "Ocean Pollution",
+  "Wildlife Conservation",
+  "Green Technology",
+  "Environmental Health",
+  "Carbon Footprint",
+];
