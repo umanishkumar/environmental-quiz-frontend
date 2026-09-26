@@ -30,22 +30,12 @@ function GenerateQuizPage() {
 
     setLoading(true);
     try {
-      // TEMPORARY: hits the manual test-create endpoint with a placeholder question.
-      // Phase 12 replaces this call with POST /api/quizzes/generate (real AI).
-      const response = await axiosClient.post("/quizzes/test-create", {
+      const response = await axiosClient.post("/quizzes/generate", {
         topic: effectiveTopic,
         difficulty,
+        numberOfQuestions,
         questionType,
         language,
-        questions: [
-          {
-            questionText: `[Placeholder] Sample question about ${effectiveTopic}?`,
-            options: ["Option A", "Option B", "Option C", "Option D"],
-            correctIndex: 1,
-            explanation: "This is placeholder data until AI generation is wired in (Phase 12).",
-            hint: "This is a temporary hint.",
-          },
-        ],
       });
 
       const quizId = response.data.id;
@@ -53,7 +43,8 @@ function GenerateQuizPage() {
     } catch (err) {
       console.error(err);
       setError(
-        err.response?.data?.message || "Failed to generate quiz. Please try again."
+        err.response?.data?.message ||
+          "Failed to generate quiz. The AI may be temporarily unavailable — please try again."
       );
     } finally {
       setLoading(false);
