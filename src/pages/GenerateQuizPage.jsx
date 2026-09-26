@@ -3,16 +3,35 @@ import { useNavigate } from "react-router-dom";
 import axiosClient from "../api/axiosClient";
 import { PREDEFINED_TOPICS } from "../constants/topics";
 
+const TOPIC_ICONS = {
+  "Climate Change": "🌡️",
+  "Global Warming": "🔥",
+  "Renewable Energy": "⚡",
+  "Biodiversity": "🦋",
+  "Ecosystems": "🌳",
+  "Pollution": "🏭",
+  "Water Conservation": "💧",
+  "Waste Management": "🗑️",
+  "Deforestation": "🪓",
+  "Sustainable Development": "🌍",
+  "Air Pollution": "💨",
+  "Ocean Pollution": "🌊",
+  "Wildlife Conservation": "🐾",
+  "Green Technology": "🔋",
+  "Environmental Health": "🏥",
+  "Carbon Footprint": "👣",
+};
+
 function GenerateQuizPage() {
   const navigate = useNavigate();
 
-  const [topicMode, setTopicMode] = useState("predefined"); // "predefined" | "custom"
+  const [topicMode, setTopicMode] = useState("predefined");
   const [topic, setTopic] = useState(PREDEFINED_TOPICS[0]);
   const [customTopic, setCustomTopic] = useState("");
   const [difficulty, setDifficulty] = useState("MEDIUM");
   const [numberOfQuestions, setNumberOfQuestions] = useState(5);
-  const [questionType, setQuestionType] = useState("MCQ");
-  const [language, setLanguage] = useState("English");
+  const [questionType] = useState("MCQ");
+  const [language] = useState("English");
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -37,9 +56,7 @@ function GenerateQuizPage() {
         questionType,
         language,
       });
-
-      const quizId = response.data.id;
-      navigate(`/quiz/${quizId}`);
+      navigate(`/quiz/${response.data.id}`);
     } catch (err) {
       console.error(err);
       setError(
@@ -51,91 +68,147 @@ function GenerateQuizPage() {
     }
   };
 
-  return (
-    <div style={{ maxWidth: 480, margin: "2rem auto" }}>
-      <h1>Generate a Quiz</h1>
+  const difficulties = [
+    { value: "EASY", label: "Easy", desc: "Basic facts & definitions", color: "emerald" },
+    { value: "MEDIUM", label: "Medium", desc: "Cause, effect & concepts", color: "amber" },
+    { value: "HARD", label: "Hard", desc: "Scenarios & reasoning", color: "rose" },
+  ];
 
-      <form onSubmit={handleSubmit}>
-        <fieldset style={{ marginBottom: "1rem" }}>
-          <legend>Topic</legend>
-          <label>
-            <input
-              type="radio"
-              checked={topicMode === "predefined"}
-              onChange={() => setTopicMode("predefined")}
-            />
-            Choose from list
-          </label>
-          <label style={{ marginLeft: "1rem" }}>
-            <input
-              type="radio"
-              checked={topicMode === "custom"}
-              onChange={() => setTopicMode("custom")}
-            />
-            Custom topic
-          </label>
+  if (loading) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center px-4">
+        <div className="relative w-24 h-24 mb-8">
+          <div className="absolute inset-0 rounded-full border-4 border-forest-100" />
+          <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-lime-500 animate-spin" />
+          <div className="absolute inset-0 flex items-center justify-center text-3xl">🌱</div>
+        </div>
+        <h2 className="text-xl font-bold text-forest-900 mb-2">Generating your quiz...</h2>
+        <p className="text-gray-500 text-sm text-center max-w-sm">
+          Our AI is crafting {numberOfQuestions} {difficulty.toLowerCase()} questions about{" "}
+          <span className="font-medium text-forest-700">{effectiveTopic}</span>. This usually
+          takes a few seconds.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-extrabold text-forest-900">Generate a Quiz</h1>
+        <p className="text-gray-500 mt-1">Pick a topic and let AI build your quiz.</p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-8">
+        {/* Topic selection */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <label className="font-semibold text-forest-900">Topic</label>
+            <button
+              type="button"
+              onClick={() => setTopicMode(topicMode === "predefined" ? "custom" : "predefined")}
+              className="text-sm text-forest-600 font-medium hover:text-lime-600 transition-colors"
+            >
+              {topicMode === "predefined" ? "Use custom topic instead →" : "← Choose from list instead"}
+            </button>
+          </div>
 
           {topicMode === "predefined" ? (
-            <select value={topic} onChange={(e) => setTopic(e.target.value)} style={{ display: "block", marginTop: "0.5rem", width: "100%" }}>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {PREDEFINED_TOPICS.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
+                <button
+                  type="button"
+                  key={t}
+                  onClick={() => setTopic(t)}
+                  className={`flex flex-col items-start gap-2 p-4 rounded-2xl border-2 text-left transition-all ${
+                    topic === t
+                      ? "border-forest-700 bg-forest-50 shadow-sm"
+                      : "border-gray-100 bg-white hover:border-gray-200"
+                  }`}
+                >
+                  <span className="text-2xl">{TOPIC_ICONS[t] || "🌿"}</span>
+                  <span className="text-sm font-medium text-forest-900 leading-tight">{t}</span>
+                </button>
               ))}
-            </select>
+            </div>
           ) : (
             <input
               type="text"
-              placeholder="Enter your own topic"
+              placeholder="e.g. Microplastics in freshwater lakes"
               value={customTopic}
               onChange={(e) => setCustomTopic(e.target.value)}
-              style={{ display: "block", marginTop: "0.5rem", width: "100%" }}
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white
+                         focus:outline-none focus:ring-2 focus:ring-lime-400 focus:border-transparent
+                         shadow-sm placeholder:text-gray-400"
             />
           )}
-        </fieldset>
-
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Difficulty</label>
-          <select value={difficulty} onChange={(e) => setDifficulty(e.target.value)} style={{ display: "block", width: "100%" }}>
-            <option value="EASY">Easy</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HARD">Hard</option>
-          </select>
         </div>
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Number of Questions</label>
-          <select
-            value={numberOfQuestions}
-            onChange={(e) => setNumberOfQuestions(Number(e.target.value))}
-            style={{ display: "block", width: "100%" }}
-          >
-            {[5, 10, 15, 20].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
+        {/* Difficulty */}
+        <div>
+          <label className="font-semibold text-forest-900 block mb-3">Difficulty</label>
+          <div className="grid grid-cols-3 gap-3">
+            {difficulties.map((d) => {
+              const isActive = difficulty === d.value;
+              const colorClasses = {
+                emerald: "border-emerald-400 bg-emerald-50 text-emerald-700",
+                amber: "border-amber-400 bg-amber-50 text-amber-700",
+                rose: "border-rose-400 bg-rose-50 text-rose-700",
+              };
+              return (
+                <button
+                  type="button"
+                  key={d.value}
+                  onClick={() => setDifficulty(d.value)}
+                  className={`p-4 rounded-2xl border-2 text-left transition-all ${
+                    isActive ? colorClasses[d.color] : "border-gray-100 bg-white hover:border-gray-200"
+                  }`}
+                >
+                  <div className={`font-bold ${isActive ? "" : "text-forest-900"}`}>{d.label}</div>
+                  <div className="text-xs text-gray-500 mt-1 leading-snug">{d.desc}</div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Question Type</label>
-          <select value={questionType} onChange={(e) => setQuestionType(e.target.value)} style={{ display: "block", width: "100%" }}>
-            <option value="MCQ">Multiple Choice</option>
-          </select>
+        {/* Question count */}
+        <div>
+          <label className="font-semibold text-forest-900 block mb-3">
+            Number of Questions: <span className="text-lime-600">{numberOfQuestions}</span>
+          </label>
+          <div className="flex items-center gap-4">
+            <input
+              type="range"
+              min="5"
+              max="20"
+              step="5"
+              value={numberOfQuestions}
+              onChange={(e) => setNumberOfQuestions(Number(e.target.value))}
+              className="flex-1 h-2 rounded-full appearance-none bg-gray-200 accent-forest-700 cursor-pointer"
+            />
+          </div>
+          <div className="flex justify-between text-xs text-gray-400 mt-1 px-0.5">
+            <span>5</span>
+            <span>10</span>
+            <span>15</span>
+            <span>20</span>
+          </div>
         </div>
 
-        <div style={{ marginBottom: "1rem" }}>
-          <label>Language</label>
-          <select value={language} onChange={(e) => setLanguage(e.target.value)} style={{ display: "block", width: "100%" }}>
-            <option value="English">English</option>
-          </select>
-        </div>
+        {error && (
+          <div className="bg-rose-50 border border-rose-200 text-rose-600 text-sm px-4 py-3 rounded-xl">
+            {error}
+          </div>
+        )}
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
-
-        <button type="submit" disabled={loading} style={{ width: "100%", padding: "0.5rem" }}>
-          {loading ? "Generating..." : "Generate Quiz"}
+        <button
+          type="submit"
+          className="w-full py-4 rounded-2xl bg-forest-900 text-white font-bold text-lg
+                     hover:bg-forest-800 active:scale-[0.98] transition-all shadow-soft
+                     flex items-center justify-center gap-2"
+        >
+          ✨ Generate Quiz
         </button>
       </form>
     </div>
