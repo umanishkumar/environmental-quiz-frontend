@@ -21,17 +21,27 @@ export default {
           400: "#4ADE80",
           500: "#22c55e",
         },
+        surface: {
+          DEFAULT: "#131A17",
+          light: "#1A2420",
+          border: "#233029",
+        },
+        ink: {
+          DEFAULT: "#E8F5EC",
+          muted: "#8BA396",
+          faint: "#5C7268",
+        },
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
       },
       boxShadow: {
-        soft: "0 4px 24px -4px rgba(15, 61, 46, 0.12)",
-        card: "0 2px 12px -2px rgba(15, 61, 46, 0.08)",
+        soft: "0 4px 24px -4px rgba(0, 0, 0, 0.4)",
+        card: "0 2px 16px -2px rgba(0, 0, 0, 0.3)",
+        glow: "0 0 24px -4px rgba(74, 222, 128, 0.35)",
       },
       backgroundImage: {
         "eco-gradient": "linear-gradient(135deg, #0F3D2E 0%, #177047 50%, #1f8f58 100%)",
-        "eco-glow": "radial-gradient(circle at top right, rgba(74,222,128,0.15), transparent 60%)",
       },
       keyframes: {
         floatSlow: {

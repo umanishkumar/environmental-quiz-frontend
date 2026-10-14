@@ -1,25 +1,31 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+html, body, #root {
+  height: 100%;
+}
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #FAF9F6;
-  color: #1A1F1C;
+  background-color: #0A0F0D;
+  color: #E8F5EC;
 }
 
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #94e0b6;
+  background: #233029;
   border-radius: 8px;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
